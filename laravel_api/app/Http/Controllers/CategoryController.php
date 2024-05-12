@@ -45,32 +45,43 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(string $id)
     {
-        //
+        $categories=Category::with('product','sub_category')->find($id);
+        return $this->sendResponse($categories,'Category fetched successfully!');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(string $id)
     {
-        //
+        $categories = Category::find($id);
+        return $this ->sendResponse($categories,'category fetched succesfully');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, string $id)
     {
-        //
+         $validator =Validator::make ($request->all(), [
+            'name' =>'required',
+         ]);
+         if($validator->fails()){
+            return $this ->sendError('Validation Eror.' , $validator->errors(),422);
+         }
+         $input = $request ->all();
+         $categories = Category::find($id)->update($input);
+         return $this ->sendResponse($categories , 'Category updated successfully !');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(string $id)
     {
-        //
+        $categories = Category::find($id)->delete();
+        return $this->sendResponse($categories,'Category deleted successfully!');
     }
 }
